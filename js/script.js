@@ -4,8 +4,10 @@
 const overview = document.querySelector(".overview");
 // variable for my github user name
 const username = "mwphelps";
+// variable for repo-list
+const repoList = document.querySelector(".repo-list");
 
-// async function to get data 
+// async function to get user data 
 // (called by )
 const getUserInfo = async function() {
     const request = await fetch(
@@ -13,7 +15,8 @@ const getUserInfo = async function() {
     )
     const data = await request.json();
     displayUser(data);
-    console.log(data);
+    getRepoInfo();
+    //console.log(data);
 };
 
 // a function to display user information
@@ -33,6 +36,30 @@ const displayUser = function(data) {
         <p><strong>Number of public repos:</strong> ${data.public_repos}</p>
     </div>`
     overview.append(div);
+};
+
+// async function to get repository list data 
+// (called by getUserInfo)
+
+const getRepoInfo = async function() {
+    const request = await fetch (
+        `https://api.github.com/users/${username}/repos?sort=updated?per_page=100`
+    );
+    const data = await request.json();
+    displayRepos(data);
+    console.log(data);
+};
+
+// a function to display repo information
+// (called by getRepoInfo function)
+
+const displayRepos = function(repos) {
+    for (let repo of repos) {
+        let li = document.createElement("li");
+        li.classList.add("repo");
+        li.innerHTML = `<h3>${repo.name}</h3>`;
+        repoList.append(li);
+    }
 };
 
 getUserInfo();
