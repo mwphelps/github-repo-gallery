@@ -10,6 +10,12 @@ const repoList = document.querySelector(".repo-list");
 const repos = document.querySelector(".repos");
 // variable to point to repo-data class in index
 const repoData = document.querySelector(".repo-data");
+// variable to point to fliter-repos class in index
+const filterRepos = document.querySelector(".filter-repos");
+// variable to point to view-repos button class in index
+const viewRepos = document.querySelector(".view-repos");
+
+let repoListArray = []; // added to help with filter search
 
 // async function to get user data 
 // (called by )
@@ -58,11 +64,13 @@ const getRepoInfo = async function() {
 // (called by getRepoInfo function)
 
 const displayRepos = function(repos) {
+    filterRepos.classList.remove("hide");
     for (let repo of repos) {
         let li = document.createElement("li");
         li.classList.add("repo");
         li.innerHTML = `<h3>${repo.name}</h3>`;
         repoList.append(li);
+        repoListArray.push(repo);
     }
 };
 
@@ -92,8 +100,8 @@ const getSpecificRepo = async function(repoName) {
         languages.push(key);
     }
     displaySpecificRepo(repoInfo, languages);
-    console.log(repoInfo);
-    console.log(languages);
+    //console.log(repoInfo);
+    //console.log(languages);
 };
 
 // function to display specific repo info
@@ -112,6 +120,31 @@ const displaySpecificRepo = function(repoInfo, languages) {
     repoData.append(div);
     repoData.classList.remove("hide");
     repos.classList.add("hide");
+    viewRepos.classList.remove("hide");
 };
+
+// click event Listener to allow list of repos to be viewed again
+
+viewRepos.addEventListener("click", function() {
+    repoData.classList.add("hide");
+    repos.classList.remove("hide");
+    viewRepos.classList.add("hide");
+});
+
+// input event listener to search repos by name
+
+filterRepos.addEventListener("input", function(e) {
+    repoList.innerHTML = "";
+    let filter = filterRepos.value;
+    let filterLower = filter.toLowerCase();
+    for (let repo of repoListArray) {
+        if (repo.name.includes(filterLower)) {
+            let li = document.createElement("li");
+            li.classList.add("repo");
+            li.innerHTML = `<h3>${repo.name}</h3>`;
+            repoList.append(li);
+        }
+    }
+});
 
 getUserInfo();
